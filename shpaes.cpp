@@ -3,46 +3,28 @@
 int main()
 {
 	// ---------------------- Initialize --------------------------
+	// Anti-aliasing edges ko smooth banati hai taa ke shapes/jagged lines zyada clean dikhein
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
 
-	// Circle
-	sf::RenderWindow window(sf::VideoMode(800, 600), "RPG Game");
-	sf::CircleShape circle(50.0f);
-	circle.setFillColor(sf::Color::Red);
-	circle.setPosition(sf::Vector2f(350.0f, 400.0f));
-	circle.setOutlineColor(sf::Color::Cyan);
-	circle.setOutlineThickness(4.8f);
-
-	// Rectangle
-	sf::RectangleShape rectangle;
-	rectangle.setFillColor(sf::Color::Blue);
-	rectangle.setSize(sf::Vector2f(200, 100));
-	rectangle.setPosition(sf::Vector2f(400, 100));
-	rectangle.setOrigin(rectangle.getSize() / 2.0f);
-	rectangle.rotate(30.0f);
-
-	// Heptagon
-	sf::CircleShape polygon(60, 7);
-	polygon.setPosition(sf::Vector2f(60.0f, 200.0f));
-	polygon.setFillColor(sf::Color::Cyan);
-	polygon.setOutlineColor(sf::Color::Yellow);
-	polygon.setOutlineThickness(4.8f);
-
-	// Convex
-	sf::ConvexShape convex;
-	convex.setPointCount(5);
-	convex.setPoint(0, sf::Vector2f(0.f, 0.f));
-	convex.setPoint(1, sf::Vector2f(150.f, 10.f));
-	convex.setPoint(2, sf::Vector2f(120.f, 90.f));
-	convex.setPoint(3, sf::Vector2f(30.f, 100.f));
-	convex.setPoint(4, sf::Vector2f(0.f, 50.f));
-	convex.setFillColor(sf::Color::Magenta);
-
-	// Lines
-	sf::RectangleShape line(sf::Vector2f(800, 3));
-	line.setPosition(10, 10);
-	line.rotate(45.f);
-
+	sf::RenderWindow window(sf::VideoMode(800, 600), "RPG Game", sf::Style::Default, settings);
 	// ---------------------- Initialize --------------------------
+
+	// ---------------------- LOAD --------------------------
+	sf::Texture playerTexture;
+	sf::Sprite playerSprite;
+
+	if (playerTexture.loadFromFile("Assets/Player/Textures/spritesheet.png"))
+	{
+		playerSprite.setTexture(playerTexture);
+
+		int Xindex = 0;
+		int Yindex = 2;
+
+		playerSprite.setTextureRect(sf::IntRect(Xindex * 64, Yindex * 64, 64, 64));
+		playerSprite.setScale(sf::Vector2f(3, 3));
+	}
+	// ---------------------- LOAD --------------------------
 
 	while (window.isOpen())
 	{
@@ -53,15 +35,26 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
+
+		sf::Vector2f position = playerSprite.getPosition();
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			playerSprite.setPosition(position + sf::Vector2f(1, 0));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			playerSprite.setPosition(position + sf::Vector2f(-1, 0));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			playerSprite.setPosition(position + sf::Vector2f(0, -1));
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			playerSprite.setPosition(position + sf::Vector2f(0, 1));
+		
 		// ---------------------- Update --------------------------
 
 		// ---------------------- Draw --------------------------
 		window.clear();
-		window.draw(circle);
-		window.draw(rectangle);
-		window.draw(polygon);
-		window.draw(convex);
-		window.draw(line);
+		window.draw(playerSprite);
 		window.display();
 		// ---------------------- Draw --------------------------
 	}
